@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import initDB from "./config/db";
 import { authRouter } from "./modules/auth/auth.route";
 import { vehiclesRouter } from "./modules/vehicles/vehicles.routes";
+import config from "./config";
 
 const app = express()
 const port = 5000;
@@ -26,11 +27,11 @@ app.use("/api/v1/vehicles", vehiclesRouter);
 
 // ! Default Get.
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!')
+    res.send('Welcome To Rental Server.')
 });
 
 
 // ! Server Listing.
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.listen(config.port, () => {
+    console.log(`Rental Server listening on port ${config.port}`)
 });
