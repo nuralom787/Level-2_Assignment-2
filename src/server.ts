@@ -1,13 +1,27 @@
 import express, { Request, Response } from "express";
 import initDB from "./config/db";
+import { authRouter } from "./modules/auth/auth.route";
+import { vehiclesRouter } from "./modules/vehicles/vehicles.routes";
 
 const app = express()
 const port = 5000;
 
+// ! init express body parser.
+app.use(express.json());
+
+
+// ! Call/Create Database.
 initDB();
 
 
-app.use("/user")
+// * User Signin/Signup Routes.
+app.use("/api/v1/auth", authRouter);
+
+
+// * Vehicle Routes.
+app.use("/api/v1/vehicles", vehiclesRouter);
+
+
 
 
 // ! Default Get.
