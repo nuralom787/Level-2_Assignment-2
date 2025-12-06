@@ -21,7 +21,9 @@ const initDB = async () => {
             CONSTRAINT chk_password_length CHECK (LENGTH(password) >= 6),
             phone VARCHAR(15) NOT NULL,
             role VARCHAR(50) NOT NULL,
-            CONSTRAINT chk_user_role CHECK (role IN ('admin', 'customer'))
+            CONSTRAINT chk_user_role CHECK (role IN ('admin', 'customer')),
+            created_at TIMESTAMP DEFAULT NOW(),
+            updated_at TIMESTAMP DEFAULT NOW()
             )
         `);
     await exports.pool.query(`
@@ -34,7 +36,9 @@ const initDB = async () => {
         daily_rent_price NUMERIC(10, 2) NOT NULL,
         CONSTRAINT chk_daily_rent_price CHECK (daily_rent_price > 0),
         availability_status VARCHAR(100) NOT NULL,
-        CONSTRAINT chk_availability_status CHECK (availability_status IN ('available', 'booked'))
+        CONSTRAINT chk_availability_status CHECK (availability_status IN ('available', 'booked')),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
         )
         `);
     await exports.pool.query(`

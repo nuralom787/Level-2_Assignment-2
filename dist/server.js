@@ -7,9 +7,10 @@ const express_1 = __importDefault(require("express"));
 const db_1 = __importDefault(require("./config/db"));
 const auth_route_1 = require("./modules/auth/auth.route");
 const vehicles_routes_1 = require("./modules/vehicles/vehicles.routes");
+const config_1 = __importDefault(require("./config"));
+const user_routes_1 = require("./modules/users/user.routes");
+const booking_routes_1 = require("./modules/bookings/booking.routes");
 const app = (0, express_1.default)();
-const port = 5000;
-// ! init express body parser.
 app.use(express_1.default.json());
 // ! Call/Create Database.
 (0, db_1.default)();
@@ -17,11 +18,15 @@ app.use(express_1.default.json());
 app.use("/api/v1/auth", auth_route_1.authRouter);
 // * Vehicle Routes.
 app.use("/api/v1/vehicles", vehicles_routes_1.vehiclesRouter);
+// * Users Routes.
+app.use("/api/v1/users", user_routes_1.userRoutes);
+// * Booking Routes.
+app.use("/api/v1/bookings", booking_routes_1.bookingRouter);
 // ! Default Get.
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Welcome To Rental Server.');
 });
 // ! Server Listing.
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+app.listen(config_1.default.port, () => {
+    console.log(`Rental Server listening on port ${config_1.default.port}`);
 });

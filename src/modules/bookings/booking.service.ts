@@ -126,8 +126,56 @@ const getAllBookings = async (payload: Record<string, undefined>) => {
     return finalResult;
 };
 
+const updateBooking = async (payload: Record<string, undefined>, bookingId: string) => {
+    let finalResult;
+    const { status, isAdmin, isCustomer, userId } = payload;
+
+    if (!isAdmin && isCustomer && status === "cancelled") {
+        const bookingRes = await pool.query(`SELECT customer_id, vehicle_id FROM bookings WHERE id=$1`, [bookingId]);
+
+        if (userId !== bookingRes.rows[0].customer_id) {
+            throw new Error("Access Block!");
+        };
+
+        const returningData = "id, customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status";
+
+        const result = await pool.query(`UPDATE bookings SET status=$1 WHERE id=$2 RETURNING ${returningData}`, [status, bookingId]);
+
+        const vehicleRes = await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`, [bookingRes.rows[0].vehicle_id]);
+
+        finalResult = {
+            success: true,
+            message: "Booking cancelled successfully",
+            data: result.rows[0]
+        }
+        return finalResult;
+    };
+
+    if (isAdmin && !isCustomer && status === "returned") {
+        const returningData = "id, customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status";
+
+        const bookingRes = await pool.query(`UPDATE bookings SET status=$1 WHERE id=$2 RETURNING ${returningData}`, [status, bookingId]);
+
+        const vehicleRes = await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1 RETURNING availability_status`, [bookingRes.rows[0].vehicle_id]);
+        const availability_status = vehicleRes.rows[0].availability_status;
+
+        finalResult = {
+            success: true,
+            message: "Booking marked as returned. Vehicle is now available",
+            data: {
+                ...bookingRes.rows[0],
+                vehicle: {
+                    availability_status
+                }
+            }
+        };
+
+        return finalResult;
+    }
+};
 
 export const bookingService = {
     createBooking,
     getAllBookings,
+    updateBooking,
 }

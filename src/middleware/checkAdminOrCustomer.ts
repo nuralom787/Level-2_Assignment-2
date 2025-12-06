@@ -16,7 +16,7 @@ const checkAdminOrCustomer = async (req: Request, res: Response, next: NextFunct
                 return res.status(401).json({ message: 'Unauthorize access' });
             };
 
-            const { id, email } = decoded as JwtPayload;
+            const { email } = decoded as JwtPayload;
             const user = await pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
 
             const isAdmin = user.rows[0].role === "admin";
@@ -24,13 +24,13 @@ const checkAdminOrCustomer = async (req: Request, res: Response, next: NextFunct
             const sameUser = user.rows[0].id === parseFloat(req.params.userId as string);
 
             if (!req.body) {
-                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId: id };
+                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId: user.rows[0].id };
             }
             else {
                 req.body.isAdmin = isAdmin
                 req.body.isCustomer = isCustomer
                 req.body.sameUser = sameUser
-                req.body.userId = id
+                req.body.userId = user.rows[0].id
             }
 
 
