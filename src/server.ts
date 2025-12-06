@@ -3,11 +3,10 @@ import initDB from "./config/db";
 import { authRouter } from "./modules/auth/auth.route";
 import { vehiclesRouter } from "./modules/vehicles/vehicles.routes";
 import config from "./config";
+import { userRoutes } from "./modules/users/user.routes";
+import { bookingRouter } from "./modules/bookings/booking.routes";
 
-const app = express()
-const port = 5000;
-
-// ! init express body parser.
+const app = express();
 app.use(express.json());
 
 
@@ -21,6 +20,15 @@ app.use("/api/v1/auth", authRouter);
 
 // * Vehicle Routes.
 app.use("/api/v1/vehicles", vehiclesRouter);
+
+
+// * Users Routes.
+app.use("/api/v1/users", userRoutes);
+
+
+
+// * Booking Routes.
+app.use("/api/v1/bookings", bookingRouter);
 
 
 
