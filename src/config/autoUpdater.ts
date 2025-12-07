@@ -2,7 +2,7 @@ import cron from "node-cron";
 import { pool } from "./db";
 import autoUpdateBookings from "./autoUpdateBooking";
 
-async function checkAndProcessOverdueBookings() {
+async function checkAndUpdateBookings() {
     try {
         const updateBooking = await pool.query(`SELECT id FROM bookings WHERE status='active' AND rent_end_date < NOW()`);
 
@@ -21,7 +21,7 @@ async function checkAndProcessOverdueBookings() {
 };
 
 function autoBookingUpdater() {
-    cron.schedule("* * * * *", checkAndProcessOverdueBookings);
+    cron.schedule("* * * * *", checkAndUpdateBookings);
 }
 
 export default autoBookingUpdater;
