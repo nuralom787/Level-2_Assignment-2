@@ -60,10 +60,10 @@ JWT_SECRET=your_secret_key
 
 ### 4. Start the Server
 ```bash
-npm start
+npm run dev
 ```
 
 
 
-Server now running… 🎉
-You can begin using the backend APIs.
+### Server now running… 🎉 You can begin using the backend APIs.
+
