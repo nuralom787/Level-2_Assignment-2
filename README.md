@@ -2,6 +2,10 @@
 
 ## A backend API-based application for managing vehicle rentals, user authentication, and booking operations.
 
+## 👩‍💻 Project Name & Live URL.
+
+👨‍🔬 Project Name: Vercel Rental System
+
 🔗 Live URL:
 ```bash
 https://vehicle-rental-system-six.vercel.app
@@ -66,4 +70,5 @@ npm run dev
 
 
 ### Server now running… 🎉 You can begin using the backend APIs.
+
 
