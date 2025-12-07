@@ -33,6 +33,7 @@ const updateUsers = async (body: Record<string, undefined>, userId: string) => {
 
 const deleteUsers = async (userId: string) => {
     const result = await pool.query(`DELETE FROM users WHERE id=$1`, [userId]);
+    console.log(result);
     return result;
 };
 

@@ -19,7 +19,10 @@ const verifyIsAdmin = async (req: Request, res: Response, next: NextFunction) =>
             const { email } = decoded as JwtPayload;
             const user = await pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
 
-            const isAdmin = user.rows[0].role === "admin";
+            let isAdmin = false;
+            if (user.rows[0]) {
+                isAdmin = user.rows[0].role === "admin";
+            }
 
             if (!isAdmin) {
                 return res.status(403).json({ message: 'Forbidden access' });

@@ -18,19 +18,19 @@ const checkAdminOrCustomer = async (req, res, next) => {
                 return res.status(401).json({ message: 'Unauthorize access' });
             }
             ;
-            const { id, email } = decoded;
+            const { email } = decoded;
             const user = await db_1.pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
             const isAdmin = user.rows[0].role === "admin";
             const isCustomer = user.rows[0].role === "customer";
             const sameUser = user.rows[0].id === parseFloat(req.params.userId);
             if (!req.body) {
-                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId: id };
+                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId: user.rows[0].id };
             }
             else {
                 req.body.isAdmin = isAdmin;
                 req.body.isCustomer = isCustomer;
                 req.body.sameUser = sameUser;
-                req.body.userId = id;
+                req.body.userId = user.rows[0].id;
             }
             next();
         });

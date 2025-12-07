@@ -9,7 +9,7 @@ const createVehicles = async (req: Request, res: Response) => {
         res.status(201).json({
             success: true,
             message: "Vehicle created successfully",
-            data: result.rows[0]
+            data: result
         })
     }
     catch (err: any) {

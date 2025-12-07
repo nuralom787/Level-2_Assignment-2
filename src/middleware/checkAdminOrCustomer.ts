@@ -19,18 +19,26 @@ const checkAdminOrCustomer = async (req: Request, res: Response, next: NextFunct
             const { email } = decoded as JwtPayload;
             const user = await pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
 
-            const isAdmin = user.rows[0].role === "admin";
-            const isCustomer = user.rows[0].role === "customer";
-            const sameUser = user.rows[0].id === parseFloat(req.params.userId as string);
+            let isAdmin;
+            let isCustomer;
+            let sameUser;
+            let userId;
+
+            if (user.rows[0]) {
+                isAdmin = user.rows[0].role === "admin";
+                isCustomer = user.rows[0].role === "customer";
+                sameUser = user.rows[0].id === parseFloat(req.params.userId as string);
+                userId = user.rows[0].id
+            };
 
             if (!req.body) {
-                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId: user.rows[0].id };
+                req.body = { isAdmin, isCustomer, sameUser: sameUser, userId };
             }
             else {
                 req.body.isAdmin = isAdmin
                 req.body.isCustomer = isCustomer
                 req.body.sameUser = sameUser
-                req.body.userId = user.rows[0].id
+                req.body.userId = userId
             }
 
 

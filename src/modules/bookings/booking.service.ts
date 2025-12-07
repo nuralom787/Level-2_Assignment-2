@@ -14,6 +14,12 @@ const createBooking = async (payload: Record<string, undefined>) => {
         throw new Error("The End date must be after start date.");
     };
 
+    const customerRes = await pool.query(`SELECT * FROM users WHERE id=$1`, [customer_id]);
+
+    if (customerRes.rowCount === 0) {
+        throw new Error(`Customers with ID ${customer_id} not found.`);
+    }
+
     const vehicleRes = await pool.query(`SELECT daily_rent_price, availability_status, vehicle_name FROM vehicles WHERE id=$1 FOR UPDATE`, [vehicle_id]);
 
     if (vehicleRes.rowCount === 0) {
@@ -29,7 +35,7 @@ const createBooking = async (payload: Record<string, undefined>) => {
     const dailyRentPrice = vehicle.daily_rent_price;
     const total_price = totalDays * dailyRentPrice;
 
-    const bookingRes = await pool.query(`INSERT INTO bookings (customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status) VALUES ($1, $2, $3, $4, $5, 'active') RETURNING *`, [customer_id, vehicle_id, rent_start_date, rent_end_date, total_price]);
+    const bookingRes = await pool.query(`INSERT INTO bookings (customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status) VALUES ($1, $2, $3, $4, $5, 'active') RETURNING id,customer_id,vehicle_id,rent_start_date,rent_end_date,total_price,status`, [customer_id, vehicle_id, rent_start_date, rent_end_date, total_price]);
 
     const newBooking = bookingRes.rows[0];
 
@@ -130,6 +136,14 @@ const updateBooking = async (payload: Record<string, undefined>, bookingId: stri
     let finalResult;
     const { status, isAdmin, isCustomer, userId } = payload;
 
+    if (isAdmin && status === "cancelled") {
+        throw new Error("You are not allowed to make this action!!.")
+    };
+
+    if (isCustomer && status === "returned") {
+        throw new Error("You are not allowed to make this action!!.")
+    };
+
     if (!isAdmin && isCustomer && status === "cancelled") {
         const bookingRes = await pool.query(`SELECT customer_id, vehicle_id FROM bookings WHERE id=$1`, [bookingId]);
 
@@ -178,4 +192,4 @@ export const bookingService = {
     createBooking,
     getAllBookings,
     updateBooking,
-}
+};

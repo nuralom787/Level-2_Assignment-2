@@ -7,7 +7,9 @@ const createVehicles = async (payload: Record<string, unknown>) => {
 
     result.rows[0].daily_rent_price = parseFloat(daily_rent_price as string);
 
-    return result;
+    const { created_at, updated_at, ...restData } = result.rows[0];
+
+    return restData;
 };
 
 const getVehicles = async () => {
@@ -17,7 +19,11 @@ const getVehicles = async () => {
 };
 
 const getSingleVehicles = async (vehicleId: string) => {
-    const result = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [vehicleId]);
+    const result = await pool.query(`SELECT id,vehicle_name,type,registration_number,daily_rent_price,availability_status FROM vehicles WHERE id=$1`, [vehicleId]);
+
+    if (result.rowCount! <= 0) {
+        throw new Error("No Vehicles Found For This ID")
+    };;
 
     const daily_rent_price = result.rows[0].daily_rent_price;
 
@@ -47,7 +53,11 @@ const updateVehicles = async (payload: Record<string, unknown>, vehicleId: strin
     values.push(vehicleId);
     const setClause = updates.join(', ');
 
-    const result = await pool.query(`UPDATE vehicles SET ${setClause} WHERE id=$${valueIndex} RETURNING *`, values);
+    const result = await pool.query(`UPDATE vehicles SET ${setClause} WHERE id=$${valueIndex} RETURNING id,vehicle_name,type,registration_number,daily_rent_price,availability_status`, values);
+
+    if (result.rowCount! <= 0) {
+        throw new Error("No Vehicles Found For This ID");
+    }
 
     result.rows[0].daily_rent_price = parseFloat(payload.daily_rent_price || result.rows[0].daily_rent_price);
 
@@ -56,6 +66,10 @@ const updateVehicles = async (payload: Record<string, unknown>, vehicleId: strin
 
 const deleteVehicles = async (vehicleId: string) => {
     const result = await pool.query(`DELETE FROM vehicles WHERE id=$1`, [vehicleId]);
+    if (result.rowCount! <= 0) {
+        throw new Error("No Vehicles Found For This ID");
+    };
+
     return result;
 }
 

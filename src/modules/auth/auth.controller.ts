@@ -29,7 +29,7 @@ const signinUser = async (req: Request, res: Response) => {
             message: "Login successful",
             data: {
                 token: result?.token,
-                user: result?.user
+                user: result?.restUser
             }
         });
     }

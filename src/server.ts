@@ -5,6 +5,7 @@ import { vehiclesRouter } from "./modules/vehicles/vehicles.routes";
 import config from "./config";
 import { userRoutes } from "./modules/users/user.routes";
 import { bookingRouter } from "./modules/bookings/booking.routes";
+import autoBookingUpdater from "./config/autoUpdater";
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,9 @@ app.use(express.json());
 
 // ! Call/Create Database.
 initDB();
+
+// ! Auto Booking Update Function.
+autoBookingUpdater();
 
 
 // * User Signin/Signup Routes.
