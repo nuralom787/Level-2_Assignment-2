@@ -10,10 +10,13 @@ const vehicles_routes_1 = require("./modules/vehicles/vehicles.routes");
 const config_1 = __importDefault(require("./config"));
 const user_routes_1 = require("./modules/users/user.routes");
 const booking_routes_1 = require("./modules/bookings/booking.routes");
+const autoUpdater_1 = __importDefault(require("./config/autoUpdater"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 // ! Call/Create Database.
 (0, db_1.default)();
+// ! Auto Booking Update Function.
+(0, autoUpdater_1.default)();
 // * User Signin/Signup Routes.
 app.use("/api/v1/auth", auth_route_1.authRouter);
 // * Vehicle Routes.

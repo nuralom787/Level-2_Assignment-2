@@ -29,6 +29,7 @@ const updateUsers = async (body, userId) => {
 };
 const deleteUsers = async (userId) => {
     const result = await db_1.pool.query(`DELETE FROM users WHERE id=$1`, [userId]);
+    console.log(result);
     return result;
 };
 exports.userServices = {

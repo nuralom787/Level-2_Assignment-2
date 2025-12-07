@@ -20,7 +20,10 @@ const verifyIsAdmin = async (req, res, next) => {
             ;
             const { email } = decoded;
             const user = await db_1.pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
-            const isAdmin = user.rows[0].role === "admin";
+            let isAdmin = false;
+            if (user.rows[0]) {
+                isAdmin = user.rows[0].role === "admin";
+            }
             if (!isAdmin) {
                 return res.status(403).json({ message: 'Forbidden access' });
             }

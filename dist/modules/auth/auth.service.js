@@ -16,6 +16,7 @@ const signupUser = async (payload) => {
 };
 const signinUser = async (email, password) => {
     const result = await db_1.pool.query(`SELECT * FROM users WHERE email=$1`, [email]);
+    const { created_at, updated_at, ...restUser } = result.rows[0];
     if (result.rows.length === 0) {
         return null;
     }
@@ -27,8 +28,8 @@ const signinUser = async (email, password) => {
     }
     ;
     const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role }, config_1.default.jwtSecret, { expiresIn: "5d" });
-    delete user["password"];
-    return { token, user };
+    delete restUser["password"];
+    return { token, restUser };
 };
 exports.authServices = {
     signupUser,

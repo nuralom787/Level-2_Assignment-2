@@ -28,7 +28,7 @@ const signinUser = async (req, res) => {
             message: "Login successful",
             data: {
                 token: result?.token,
-                user: result?.user
+                user: result?.restUser
             }
         });
     }
