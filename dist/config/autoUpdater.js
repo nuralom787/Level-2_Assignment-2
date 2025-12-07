@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_cron_1 = __importDefault(require("node-cron"));
 const db_1 = require("./db");
 const autoUpdateBooking_1 = __importDefault(require("./autoUpdateBooking"));
-async function checkAndProcessOverdueBookings() {
+async function checkAndUpdateBookings() {
     try {
         const updateBooking = await db_1.pool.query(`SELECT id FROM bookings WHERE status='active' AND rent_end_date < NOW()`);
         for (const row of updateBooking.rows) {
@@ -24,6 +24,6 @@ async function checkAndProcessOverdueBookings() {
 }
 ;
 function autoBookingUpdater() {
-    node_cron_1.default.schedule("* * * * *", checkAndProcessOverdueBookings);
+    node_cron_1.default.schedule("* * * * *", checkAndUpdateBookings);
 }
 exports.default = autoBookingUpdater;
