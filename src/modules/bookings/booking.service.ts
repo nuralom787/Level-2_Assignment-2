@@ -145,10 +145,24 @@ const updateBooking = async (payload: Record<string, undefined>, bookingId: stri
     };
 
     if (!isAdmin && isCustomer && status === "cancelled") {
-        const bookingRes = await pool.query(`SELECT customer_id, vehicle_id FROM bookings WHERE id=$1`, [bookingId]);
+        const bookingRes = await pool.query(`SELECT customer_id, vehicle_id, rent_start_date FROM bookings WHERE id=$1`, [bookingId]);
+
+        if (bookingRes.rowCount === 0) {
+            throw new Error("Booking not found!");
+        };
 
         if (userId !== bookingRes.rows[0].customer_id) {
             throw new Error("Access Block!");
+        };
+
+        const rent_start_date = new Date(bookingRes.rows[0].rent_start_date);
+        const today = new Date();
+
+        rent_start_date.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        if (today >= rent_start_date) {
+            throw new Error("Booking can only be cancelled before the rent start date.");
         };
 
         const returningData = "id, customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status";
